@@ -4,60 +4,71 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Microbiome State Dashboard</title>
+
 <style>
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        margin: 40px;
-        background-color: #f8f9fa;
-        color: #2c3e50;
-    }
-    h1 {
-        margin-bottom: 5px;
-    }
-    h3 {
-        color: #555;
-        margin-top: 0;
-        margin-bottom: 30px;
-    }
-    .grid-container {
-        display: grid;
-        grid-template-columns: repeat(4, 100px);
-        gap: 15px;
-        margin-bottom: 30px;
-    }
-    .grid-box {
-        width: 100px;
-        height: 100px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 12px;
-        color: white;
-        font-weight: bold;
-        font-size: 14px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-    }
-    .legend {
-        max-width: 445px;
-        font-size: 14px;
-        color: #444;
-        line-height: 1.5;
-    }
-    .gradient-bar {
-        height: 15px;
-        background: linear-gradient(to right, blue, #555, red);
-        border-radius: 4px;
-        margin-bottom: 5px;
-    }
-    .legend-labels {
-        display: flex;
-        justify-content: space-between;
-        font-weight: bold;
-        margin-bottom: 15px;
-    }
+
+body {
+    font-family: "Times New Roman", Times, serif;
+    margin: 40px;
+    background-color: #f8f9fa;
+    color: #2c3e50;
+}
+
+h1 {
+    margin-bottom: 5px;
+}
+
+h3 {
+    color: #555;
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 100px);
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.grid-box {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.legend {
+    max-width: 450px;
+    font-size: 15px;
+    color: #333;
+    line-height: 1.6;
+}
+
+.gradient-bar {
+    height: 15px;
+    background: linear-gradient(to right, #2166ac, #f7f7f7, #b2182b);
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.legend-labels {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
 </style>
 </head>
+
 <body>
 
 <h1>Microbiome State</h1>
@@ -66,84 +77,131 @@
 <div id="content">Loading clinical data...</div>
 
 <script>
+
 // Get patient id from URL
 const params = new URLSearchParams(window.location.search);
 const patient_id = params.get("id");
 
 if(!patient_id){
-    document.getElementById("content").innerHTML = "<p style='color:red;'>Error: No patient ID provided in the URL.</p>";
+
+    document.getElementById("content").innerHTML =
+    "<p style='color:red;'>Error: No patient ID provided in the URL.</p>";
+
     document.getElementById("patient-header").innerText = "Unknown Patient";
-} else {
+
+}
+
+else{
+
     document.getElementById("patient-header").innerText = `Patient: ${patient_id}`;
 
-    // Fetch CSV
     fetch("Microbiome_Master_Signatures.csv")
+
     .then(response => {
-        if (!response.ok) throw new Error("CSV file not found.");
+
+        if (!response.ok)
+            throw new Error("CSV file not found.");
+
         return response.text();
+
     })
+
     .then(data => {
+
         const rows = data.split("\n");
         let patient_row = null;
 
-        // Find the patient
         for(let i = 1; i < rows.length; i++){
+
             const cols = rows[i].split(",");
+
             if(cols[0] === patient_id){
+
                 patient_row = cols;
                 break;
+
             }
         }
 
         if(!patient_row){
-            document.getElementById("content").innerHTML = `<p style='color:red;'>Error: Patient '${patient_id}' not found in the database.</p>`;
+
+            document.getElementById("content").innerHTML =
+            `<p style='color:red;'>Error: Patient '${patient_id}' not found in the database.</p>`;
+
             return;
+
         }
 
-        // Build the 4x4 Grid UI
         let html = `<div class="grid-container">`;
-        
-        // Loop through the 16 grid values (assumes cols 1 through 16 are G11-G44)
-        for(let i = 1; i <= 16; i++){
-            let val = parseFloat(patient_row[i]);
-            
-            // Calculate dynamic color intensity
-            // Adjust the multiplier (currently 10) if you want the colors to be more or less sensitive
-            let intensity = Math.min(Math.abs(val) * 10, 1); 
-            
-            let bgColor = val >= 0 
-                ? `rgba(220, 20, 60, ${intensity + 0.2})`  // Crimson Red for positive
-                : `rgba(0, 0, 205, ${intensity + 0.2})`;   // Medium Blue for negative
 
-            html += `<div class="grid-box" style="background-color: ${bgColor};">
-                        ${val.toFixed(3)}
-                     </div>`;
+        for(let i = 1; i <= 16; i++){
+
+            let val = parseFloat(patient_row[i]);
+
+            let intensity = Math.min(Math.abs(val) * 10, 1);
+
+            let bgColor = val >= 0
+                ? `rgba(178, 24, 43, ${intensity + 0.2})`
+                : `rgba(33, 102, 172, ${intensity + 0.2})`;
+
+            html += `
+            <div class="grid-box" style="background-color:${bgColor};">
+                ${val.toFixed(3)}
+            </div>`;
         }
-        
+
         html += `</div>`;
 
-        // Add the Legend
         html += `
-            <div class="legend">
-                <strong>Microbial Module Activity</strong>
-                <div class="gradient-bar"></div>
-                <div class="legend-labels">
-                    <span>Low</span>
-                    <span>Average</span>
-                    <span>High</span>
-                </div>
-                <p>Each square represents a microbial community module derived from groups of bacteria that tend to appear together across patients.</p>
-                <p>Blue indicates a lower presence of that microbial community in this patient, while red indicates a stronger presence relative to the population.</p>
-                <p>Together, the 16 squares form a fingerprint of the patient's gut microbiome state.</p>
-            </div>
+        <div class="legend">
+
+        <strong>Microbial Community Activity Index</strong>
+
+        <div class="gradient-bar"></div>
+
+        <div class="legend-labels">
+            <span>Depleted</span>
+            <span>Baseline</span>
+            <span>Enriched</span>
+        </div>
+
+        <p>
+        Each square represents a microbial community module derived from
+        bacterial taxa that frequently co-occur across individuals in
+        population-scale microbiome studies.
+        </p>
+
+        <p>
+        The color intensity reflects the relative activity or abundance
+        of the microbial module in this patient compared to the reference cohort.
+        </p>
+
+        <p>
+        Blue indicates relative depletion, white represents baseline
+        abundance, and red indicates enrichment of the microbial community.
+        </p>
+
+        <p>
+        Together, the sixteen modules form a composite microbial
+        state signature describing the patient's gut microbiome profile.
+        </p>
+
+        </div>
         `;
 
         document.getElementById("content").innerHTML = html;
+
     })
+
     .catch(error => {
-        document.getElementById("content").innerHTML = `<p style='color:red;'>Error loading database: ${error.message}</p>`;
+
+        document.getElementById("content").innerHTML =
+        `<p style='color:red;'>Error loading database: ${error.message}</p>`;
+
     });
+
 }
+
 </script>
 
 </body>
