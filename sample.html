@@ -93,8 +93,6 @@ if(!patient_id){
 
 else{
 
-    document.getElementById("patient-header").innerText = `Patient: ${patient_id}`;
-
     fetch("Microbiome_Master_Signatures.csv")
 
     .then(response => {
@@ -131,6 +129,10 @@ else{
             return;
 
         }
+
+        // Extract disease category (column 17, index 17)
+        const diseaseCategory = patient_row[17] || "Unknown";
+        document.getElementById("patient-header").innerText = `Patient ID: ${patient_id}, Disease Category: ${diseaseCategory}`;
 
         let html = `<div class="grid-container">`;
 
