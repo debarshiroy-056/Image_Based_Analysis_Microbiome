@@ -53,10 +53,11 @@ h3 {
 }
 
 .gradient-bar {
-    height: 15px;
-    background: linear-gradient(to right, #2166ac, #f7f7f7, #b2182b);
-    border-radius: 4px;
-    margin-bottom: 5px;
+    height: 20px;
+    background: linear-gradient(to right, #00338D, #E8F0F7, #C41E3A);
+    border-radius: 5px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
 .legend-labels {
@@ -143,8 +144,8 @@ else{
             let intensity = Math.min(Math.abs(val) * 10, 1);
 
             let bgColor = val >= 0
-                ? `rgba(178, 24, 43, ${intensity + 0.2})`
-                : `rgba(33, 102, 172, ${intensity + 0.2})`;
+                ? `rgba(196, 30, 58, ${intensity + 0.15})`
+                : `rgba(0, 51, 141, ${intensity + 0.15})`;
 
             html += `
             <div class="grid-box" style="background-color:${bgColor};">
