@@ -1,0 +1,13 @@
+# Large data files
+*.pkl
+*.RData
+
+# Result folders
+REM_Results_*
+Gut_Identification_Results/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# System files
+.DS_Store
